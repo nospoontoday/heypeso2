@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ReferralCode;
 use App\Models\User;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
@@ -11,12 +12,15 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
+    ReferralCode::create(['code' => '12345678']);
+
     $response = $this->post(route('register.store'), [
         'name' => 'John Doe',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
         'user_type' => 'borrower',
+        'referral_code' => '12345678',
     ]);
 
     $response->assertSessionHasNoErrors()
@@ -27,6 +31,10 @@ test('new users can register', function () {
         'name' => 'John Doe',
         'email' => 'test@example.com',
         'user_type' => 'borrower',
+    ]);
+    $this->assertDatabaseHas('referral_codes', [
+        'code' => '12345678',
+        'used_by_user_id' => 1, // assuming first user
     ]);
 });
 
@@ -48,6 +56,20 @@ test('new users can register as lender', function () {
         'email' => 'lender@example.com',
         'user_type' => 'lender',
     ]);
+});
+
+test('borrower registration fails with invalid referral code', function () {
+    $response = $this->post(route('register.store'), [
+        'name' => 'Borrower User',
+        'email' => 'borrower@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+        'user_type' => 'borrower',
+        'referral_code' => 'INVALID8',
+    ]);
+
+    $response->assertSessionHasErrors('referral_code');
+    $this->assertGuest();
 });
 
 test('same email cannot be used for different user types', function () {

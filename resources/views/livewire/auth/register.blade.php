@@ -5,7 +5,7 @@
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6">
+        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6" x-data="{ userType: '{{ old('user_type', 'borrower') }}' }">
             @csrf
             <!-- Name -->
             <flux:input
@@ -36,10 +36,24 @@
                 :label="__('User Type')"
                 :value="old('user_type')"
                 required
+                @change="userType = $event.target.value"
             >
                 <option value="borrower">{{ __('Borrower') }}</option>
                 <option value="lender">{{ __('Lender') }}</option>
             </flux:select>
+
+            <!-- Referral Code (only for borrowers) -->
+            <div x-show="userType === 'borrower'" x-transition>
+                <flux:input
+                    name="referral_code"
+                    :label="__('Referral Code')"
+                    :value="old('referral_code')"
+                    type="text"
+                    maxlength="8"
+                    required
+                    :placeholder="__('Enter 8-character referral code')"
+                />
+            </div>
 
             <!-- Password -->
             <flux:input

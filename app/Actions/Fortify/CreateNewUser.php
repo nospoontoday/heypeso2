@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\ReferralCode;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -18,7 +19,7 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        Validator::make($input, [
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
@@ -29,13 +30,30 @@ class CreateNewUser implements CreatesNewUsers
             ],
             'password' => $this->passwordRules(),
             'user_type' => ['required', 'string', Rule::in(['lender', 'borrower'])],
-        ])->validate();
+        ];
 
-        return User::create([
+        if ($input['user_type'] === 'borrower') {
+            $rules['referral_code'] = [
+                'required',
+                'string',
+                'size:8',
+                Rule::exists('referral_codes', 'code')->whereNull('used_by_user_id'),
+            ];
+        }
+
+        Validator::make($input, $rules)->validate();
+
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
             'user_type' => $input['user_type'],
         ]);
+
+        if ($input['user_type'] === 'borrower') {
+            ReferralCode::where('code', $input['referral_code'])->update(['used_by_user_id' => $user->id]);
+        }
+
+        return $user;
     }
 }
