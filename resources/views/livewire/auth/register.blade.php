@@ -5,7 +5,16 @@
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6" x-data="{ userType: '{{ old('user_type', 'borrower') }}' }">
+        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6" x-data="{
+            userType: localStorage.getItem('user_type') || '{{ old('user_type', 'borrower') }}',
+            init() {
+                localStorage.setItem('user_type', this.userType);
+            },
+            updateUserType(value) {
+                this.userType = value;
+                localStorage.setItem('user_type', value);
+            }
+        }">
             @csrf
             <!-- Name -->
             <flux:input
@@ -34,9 +43,9 @@
             <flux:select
                 name="user_type"
                 :label="__('User Type')"
-                :value="old('user_type')"
+                x-model="userType"
                 required
-                @change="userType = $event.target.value"
+                @change="updateUserType($event.target.value)"
             >
                 <option value="borrower">{{ __('Borrower') }}</option>
                 <option value="lender">{{ __('Lender') }}</option>
@@ -50,7 +59,7 @@
                     :value="old('referral_code')"
                     type="text"
                     maxlength="8"
-                    required
+                    x-bind:required="userType === 'borrower'"
                     :placeholder="__('Enter 8-character referral code')"
                 />
             </div>

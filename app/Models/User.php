@@ -97,4 +97,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(ReferralCode::class, 'used_by_user_id');
     }
+
+    /**
+     * Get the loan offers created by this user
+     */
+    public function loanOffers()
+    {
+        return $this->hasMany(LoanOffer::class, 'lender_id');
+    }
 }
