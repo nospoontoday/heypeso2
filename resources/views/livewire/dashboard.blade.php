@@ -24,7 +24,7 @@
                                 <div class="bg-gray-50 dark:bg-gray-800 p-2 rounded text-xs">
                                     <p class="font-medium">{{ config('borrower.tier_badges')[$offer->borrower_tier]['name'] }} - ₱{{ number_format($offer->min_amount) }} - ₱{{ number_format($offer->max_amount) }}</p>
                                     <p class="text-gray-600 dark:text-gray-400">{{ $offer->interest_rate }}% interest, {{ $offer->duration_months }} months</p>
-                                    <p class="text-gray-500 dark:text-gray-500">Created: {{ $offer->created_at->format('M d, Y') }}</p>
+                                    <p class="text-gray-500 dark:text-gray-500">{{ $offer->available_slots }} slots available</p>
                                 </div>
                             @endforeach
                         </div>
@@ -49,7 +49,7 @@
             <div class="grid auto-rows-min gap-4 md:grid-cols-3">
                 <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
                     <h3 class="text-lg font-semibold">{{ __('Available Offers') }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Browse loan offers</p>
+                    <livewire:borrower.browse-offers />
                 </div>
                 <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
                     <h3 class="text-lg font-semibold">{{ __('My Loans') }}</h3>

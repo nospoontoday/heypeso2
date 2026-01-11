@@ -109,4 +109,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(LoanOffer::class, 'lender_id');
     }
+
+    /**
+     * Get the reputation score for this user
+     */
+    public function reputationScore()
+    {
+        return $this->hasOne(ReputationScore::class);
+    }
+
+    /**
+     * Check if the user can apply for a new loan
+     */
+    public function canApplyForNewLoan()
+    {
+        // Implement logic based on config safety controls
+        $activeLoans = 0; // Placeholder, would count active loans
+        return $activeLoans < config('borrower.safety_controls.max_active_loans_per_borrower');
+    }
 }

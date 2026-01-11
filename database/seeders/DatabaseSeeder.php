@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ReferralCodeSeeder::class,
             AdminUserSeeder::class,
+            BorrowerTestDataSeeder::class,
         ]);
     }
 }

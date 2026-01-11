@@ -10,6 +10,8 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+
+
 Route::get('/time-manipulation', [App\Http\Controllers\TimeManipulationController::class, 'index'])
     ->middleware(['auth', 'verified', 'admin.only'])
     ->name('time.manipulation');
