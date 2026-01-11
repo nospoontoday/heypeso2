@@ -4,9 +4,16 @@
             <!-- Lender Dashboard -->
             <div class="flex justify-between items-center">
                 <h1 class="text-2xl font-bold">{{ __('Lender Dashboard') }}</h1>
-                <flux:button wire:click="openCreateOfferModal" variant="primary">
-                    {{ __('Create Loan Offer') }}
-                </flux:button>
+                <div class="flex gap-2">
+                    <flux:button wire:click="openCreateOfferModal" variant="primary">
+                        {{ __('Create Loan Offer') }}
+                    </flux:button>
+                    @if(auth()->user()->is_admin)
+                        <flux:button href="{{ route('time.manipulation') }}" variant="outline" wire:navigate>
+                            {{ __('Time Manipulation') }}
+                        </flux:button>
+                    @endif
+                </div>
             </div>
             <div class="grid auto-rows-min gap-4 md:grid-cols-3">
                 <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
@@ -17,6 +24,7 @@
                                 <div class="bg-gray-50 dark:bg-gray-800 p-2 rounded text-xs">
                                     <p class="font-medium">{{ config('borrower.tier_badges')[$offer->borrower_tier]['name'] }} - ₱{{ number_format($offer->min_amount) }} - ₱{{ number_format($offer->max_amount) }}</p>
                                     <p class="text-gray-600 dark:text-gray-400">{{ $offer->interest_rate }}% interest, {{ $offer->duration_months }} months</p>
+                                    <p class="text-gray-500 dark:text-gray-500">Created: {{ $offer->created_at->format('M d, Y') }}</p>
                                 </div>
                             @endforeach
                         </div>

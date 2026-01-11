@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\ManagesTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LoanOffer extends Model
 {
+    use ManagesTime;
+
     protected $fillable = [
         'lender_id',
         'borrower_tier',
